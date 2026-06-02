@@ -1,0 +1,411 @@
+DOCUMENT 2: DESIGN DOCUMENT
+B4 – Document Management & CLM Design
+Architecture
+UI Layer (LWC)
+
+Components:
+
+ktDocumentPreview
+ktDocumentVault
+ktDocumentVaultPortal
+ktSignaturePad
+ktESignatureConfig
+ktOCRReview
+ktBulkDocumentMonitor
+
+Purpose:
+
+Preview documents
+Manage vault
+Capture signatures
+Review OCR results
+Monitor bulk jobs
+Flow Layer
+
+Flows:
+
+Document Generation Wizard
+Bulk Send Wizard
+Document Request Reminder
+Signature Reminder
+Signature Expiry Check
+Document Expiry Alert
+Vault Status Sync
+
+Purpose:
+
+User guided processes
+Automated reminders
+Status updates
+Apex Layer
+Document Services
+KT_DocumentGeneratorService
+KT_DocumentChecklistService
+
+Purpose:
+
+Generate documents
+Resolve merge fields
+Create checklist records
+Signature Services
+KT_ESignatureOrchestrator
+KT_ESignatureService
+KT_DocuSignConnector
+
+Purpose:
+
+Create signing requests
+Manage signer workflow
+Process audit information
+OCR Services
+KT_OcrIngestionService
+KT_OcrPollingBatch
+
+Purpose:
+
+Submit OCR jobs
+Poll providers
+Map extracted fields
+Bulk Processing
+KT_BulkDocumentBatch
+KT_BulkDocumentQueueable
+KT_BulkDocumentJobService
+
+Purpose:
+
+Bulk generation
+Bulk dispatch
+Job monitoring
+Data Model
+KT_Document_Request__c
+
+Stores document checklist.
+
+Key Status:
+
+Not Started
+In Progress
+Awaiting Signature
+Complete
+Waived
+Rejected
+KT_DocumentTemplate__c
+
+Stores template configuration.
+
+Key Data:
+
+Domain
+Persona
+Language
+Version
+Output Format
+Signer Configuration
+KT_DocumentVault__c
+
+Stores document metadata.
+
+Key Status:
+
+Draft
+Pending Signature
+Signed
+Verified
+Expired
+Archived
+KT_Signature_Request__c
+
+Stores signing workflow.
+
+Key Status:
+
+Configured
+In Progress
+Partially Signed
+Fully Signed
+Expired
+Cancelled
+KT_Signer__c
+
+Stores signer information.
+
+Captures:
+
+Email
+Role
+Signature Status
+IP Address
+Geolocation
+Timestamp
+KT_Signature_Audit__c
+
+Stores immutable audit trail.
+
+Captures:
+
+Event Type
+Timestamp
+IP Address
+User Agent
+Document Hash
+KT_OCR_Job__c
+
+Stores OCR processing details.
+
+Status:
+
+Submitted
+Processing
+Review Required
+Accepted
+Rejected
+Failed
+KT_Bulk_Document_Job__c
+
+Stores bulk processing information.
+
+Status:
+
+Queued
+Running
+Partially Complete
+Complete
+Failed
+Integrations
+OCR Providers
+AWS Textract
+Azure Form Recognizer
+E-Sign Providers
+KT Sign
+DocuSign
+Adobe Sign
+Security
+Virus Scan API
+Salesforce Shield
+Field Audit Trail
+Platform Events
+KT_Document_Uploaded__e
+
+Triggered after document upload.
+
+KT_Document_Generated__e
+
+Triggered after document generation.
+
+KT_Signature_Complete__e
+
+Triggered after signing completion.
+
+KT_OCR_Job_Complete__e
+
+Triggered after OCR completion.
+
+End-to-End Design Flow
+Onboarding record created.
+DIE generates document checklist.
+HR previews templates.
+Document generated.
+Document stored in vault.
+Signature workflow configured.
+Signers receive invitations.
+Signatures captured.
+Audit records created.
+Uploaded documents trigger OCR.
+HR reviews extracted data.
+Compliance updated.
+Expiry/reminder flows executed.
+Bulk jobs processed.
+Agentforce monitors compliance and document status.
+QA Focus Areas (P0)
+Checklist Generation
+Document Generation
+Merge Fields
+Vault Creation
+Signature Workflow
+Audit Records
+OCR Processing
+OCR Review
+Document Versioning
+Expiry Tracking
+Bulk Processing
+Permissions
+Compliance Validation
+Virus Scan
+Agentforce Actions
+
+This format is usually what QA Leads expect before creating Functional Test Cases, Integration Test Cases, and UAT Scenarios.
+
+i want to copy or move the source folder now  i have tried with zip file this is not correct i think beacuse no files are showing in the github
+
+If you uploaded OnboardingV2.zip directly to GitHub and after pushing you don't see any source files, then one of these is usually happening:
+
+Scenario 1: You uploaded the ZIP file itself
+
+GitHub does not automatically extract ZIP files.
+
+Example:
+
+❌ Repository contains:
+
+OnboardingV2.zip
+README.md
+
+You won't see:
+
+force-app/
+lwc/
+classes/
+objects/
+flows/
+
+because they are still inside the ZIP.
+
+Fix
+Extract the ZIP locally.
+Open the extracted folder.
+
+You should see folders like:
+
+force-app
+manifest
+scripts
+sfdx-project.json
+Copy those folders/files into your Git repository.
+Commit and push again.
+
+Example:
+
+git add .
+git commit -m "Added Salesforce source files"
+git push origin main
+Scenario 2: ZIP extracted but nested folder issue
+
+Sometimes after extraction:
+
+OnboardingV2/
+    OnboardingV2/
+        force-app/
+        manifest/
+
+GitHub may only show:
+
+OnboardingV2
+
+Open the inner folder and move contents up one level.
+
+Correct structure:
+
+Repository Root
+│
+├── force-app
+├── manifest
+├── scripts
+├── sfdx-project.json
+└── README.md
+Scenario 3: .gitignore is excluding files
+
+Check .gitignore.
+
+If it contains:
+
+force-app/
+
+or
+
+*.cls
+*.xml
+
+Git will ignore Salesforce metadata.
+
+Run:
+
+git status
+
+If no files appear, check .gitignore.
+
+Scenario 4: Files not added to Git
+
+Run:
+
+git status
+
+If you see:
+
+Untracked files:
+force-app/
+manifest/
+
+Then add them:
+
+git add .
+git commit -m "Added source code"
+git push
+Check what GitHub should show
+
+For a Salesforce project, GitHub should show something like:
+
+force-app
+ └── main
+      └── default
+           ├── classes
+           ├── lwc
+           ├── objects
+           ├── flows
+           ├── permissionsets
+           └── customMetadata
+
+manifest
+sfdx-project.json
+README.md
+To verify your ZIP
+
+Extract OnboardingV2.zip and tell me:
+
+What folders do you see inside?
+Or upload a screenshot of the extracted folder.
+
+Then I can tell you exactly which folder needs to be copied into GitHub and the exact commands to use.
+
+i want to logout from the github desktop
+
+To log out from GitHub Desktop, follow these steps:
+
+Method 1: Sign Out from GitHub Desktop
+Open GitHub Desktop.
+Click File (top-left menu).
+Click Options (Windows) or Preferences (Mac).
+Go to the Accounts tab.
+Under GitHub.com, click Sign Out.
+Confirm the sign out.
+Method 2: Remove Account Completely
+
+If you want to switch to another GitHub account:
+
+Open GitHub Desktop.
+Go to File → Options → Accounts.
+Click Sign Out.
+Close GitHub Desktop.
+Reopen GitHub Desktop.
+Click Sign in to GitHub.com and log in with the new account.
+If "Sign Out" is Missing
+
+Sometimes GitHub Desktop uses stored credentials.
+
+Close GitHub Desktop.
+Open Windows Credential Manager:
+Press Windows + S
+Search Credential Manager
+Select Windows Credentials.
+Remove entries related to:
+GitHub
+git:https://github.com
+GitHub Desktop
+Reopen GitHub Desktop and sign in again.
+
+Can you tell me:
+
+Are you using Windows 10/11?
+What version of GitHub Desktop?
+Do you want to log out, or change to another GitHub account?
+
+I can then give exact screenshots/steps for your situation.
