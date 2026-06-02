@@ -1,4 +1,4 @@
-DOCUMENT 2: DESIGN DOCUMENT
+DOCUMENT : DESIGN DOCUMENT
 B4 – Document Management & CLM Design
 Architecture
 UI Layer (LWC)
