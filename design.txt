@@ -1,0 +1,219 @@
+
+DOCUMENT 2: DESIGN DOCUMENT
+B4 – Document Management & CLM Design
+Architecture
+UI Layer (LWC)
+
+Components:
+
+ktDocumentPreview
+ktDocumentVault
+ktDocumentVaultPortal
+ktSignaturePad
+ktESignatureConfig
+ktOCRReview
+ktBulkDocumentMonitor
+
+Purpose:
+
+Preview documents
+Manage vault
+Capture signatures
+Review OCR results
+Monitor bulk jobs
+Flow Layer
+
+Flows:
+
+Document Generation Wizard
+Bulk Send Wizard
+Document Request Reminder
+Signature Reminder
+Signature Expiry Check
+Document Expiry Alert
+Vault Status Sync
+
+Purpose:
+
+User guided processes
+Automated reminders
+Status updates
+Apex Layer
+Document Services
+KT_DocumentGeneratorService
+KT_DocumentChecklistService
+
+Purpose:
+
+Generate documents
+Resolve merge fields
+Create checklist records
+Signature Services
+KT_ESignatureOrchestrator
+KT_ESignatureService
+KT_DocuSignConnector
+
+Purpose:
+
+Create signing requests
+Manage signer workflow
+Process audit information
+OCR Services
+KT_OcrIngestionService
+KT_OcrPollingBatch
+
+Purpose:
+
+Submit OCR jobs
+Poll providers
+Map extracted fields
+Bulk Processing
+KT_BulkDocumentBatch
+KT_BulkDocumentQueueable
+KT_BulkDocumentJobService
+
+Purpose:
+
+Bulk generation
+Bulk dispatch
+Job monitoring
+Data Model
+KT_Document_Request__c
+
+Stores document checklist.
+
+Key Status:
+
+Not Started
+In Progress
+Awaiting Signature
+Complete
+Waived
+Rejected
+KT_DocumentTemplate__c
+
+Stores template configuration.
+
+Key Data:
+
+Domain
+Persona
+Language
+Version
+Output Format
+Signer Configuration
+KT_DocumentVault__c
+
+Stores document metadata.
+
+Key Status:
+
+Draft
+Pending Signature
+Signed
+Verified
+Expired
+Archived
+KT_Signature_Request__c
+
+Stores signing workflow.
+
+Key Status:
+
+Configured
+In Progress
+Partially Signed
+Fully Signed
+Expired
+Cancelled
+KT_Signer__c
+
+Stores signer information.
+
+Captures:
+
+Email
+Role
+Signature Status
+IP Address
+Geolocation
+Timestamp
+KT_Signature_Audit__c
+
+Stores immutable audit trail.
+
+Captures:
+
+Event Type
+Timestamp
+IP Address
+User Agent
+Document Hash
+KT_OCR_Job__c
+
+Stores OCR processing details.
+
+Status:
+
+Submitted
+Processing
+Review Required
+Accepted
+Rejected
+Failed
+KT_Bulk_Document_Job__c
+
+Stores bulk processing information.
+
+Status:
+
+Queued
+Running
+Partially Complete
+Complete
+Failed
+Integrations
+OCR Providers
+AWS Textract
+Azure Form Recognizer
+E-Sign Providers
+KT Sign
+DocuSign
+Adobe Sign
+Security
+Virus Scan API
+Salesforce Shield
+Field Audit Trail
+Platform Events
+KT_Document_Uploaded__e
+
+Triggered after document upload.
+
+KT_Document_Generated__e
+
+Triggered after document generation.
+
+KT_Signature_Complete__e
+
+Triggered after signing completion.
+
+KT_OCR_Job_Complete__e
+
+Triggered after OCR completion.
+
+End-to-End Design Flow
+Onboarding record created.
+DIE generates document checklist.
+HR previews templates.
+Document generated.
+Document stored in vault.
+Signature workflow configured.
+Signers receive invitations.
+Signatures captured.
+Audit records created.
+Uploaded documents trigger OCR.
+HR reviews extracted data.
+Compliance updated.
+Expiry/reminder flows executed.
+Bulk jobs processed.
+Agentforce monitors compliance and document status.
